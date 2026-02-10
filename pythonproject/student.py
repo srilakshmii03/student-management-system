@@ -1,5 +1,5 @@
 students = []
-
+# Function to add a new student
 def add_student():
     name = input("Enter student name: ")
     roll = input("Enter roll number: ")
@@ -13,7 +13,7 @@ def add_student():
 
     students.append(student)
     print("Student added successfully!")
-
+# Function to view the existing students
 def view_students():
     if not students:
         print("No students found.")
@@ -21,7 +21,7 @@ def view_students():
         print("\n--- Student List ---")
         for i, student in enumerate(students, start=1):
             print(f"{i}. Name: {student['name']}, Roll: {student['roll']}, Branch: {student['branch']}")
-
+# Function to update existing students data
 def update_student():
     roll = input("Enter roll number of student to update: ")
 
@@ -32,9 +32,8 @@ def update_student():
             student["branch"] = input("Enter new branch: ")
             print("Student updated successfully!")
             return
-
     print("Student not found.")
-
+# Function to delete students
 def delete_student():
     roll = input("Enter roll number of student to delete: ")
 
@@ -45,7 +44,7 @@ def delete_student():
             return
 
     print("Student not found.")
-
+# Main function
 def menu():
     while True:
         print("\n--- Student Management System ---")
