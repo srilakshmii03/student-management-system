@@ -1,85 +1,97 @@
-# ================================
-# STUDENT MANAGEMENT SYSTEM
-# ================================
+# ---------------- MAIN DATA STRUCTURE ----------------
 
-# ---------- Helper Functions ----------
-def get_non_empty_input(prompt):
-    while True:
-        value = input(prompt).strip()
-        if value:
-            return value
-        else:
-            print("Input cannot be empty. Please try again.")
+DATA_FILE = "students.txt"
 
 
-# ---------- Main Data Structure ----------
-# Dictionary: roll_number -> student details
-students = {}
+# Function to load students from file
+def load_students_from_file():
+    data = {}
+    try:
+        file = open(DATA_FILE, "r")
+        for line in file:
+            line = line.strip()
+            if line:  # skip empty lines
+                roll, name, branch = line.split(",")
+                data[roll] = {"name": name, "branch": branch}
+        file.close()
+    except FileNotFoundError:
+        pass
+    return data
 
 
-# ---------- Core Functions ----------
+# Load existing data at start
+students = load_students_from_file()
 
-# Add a new student
+
+# Function to save students to file
+def save_students_to_file():
+    file = open(DATA_FILE, "w")
+    for roll, student in students.items():
+        line = roll + "," + student["name"] + "," + student["branch"] + "\n"
+        file.write(line)
+    file.close()
+
+
+# ----------- Core Functions -----------
+
+
+# Function to add a new student
 def add_student():
-    name = get_non_empty_input("Enter student name: ")
-    roll = get_non_empty_input("Enter roll number: ")
-    branch = get_non_empty_input("Enter branch: ")
+    name = input("Enter student name: ")
+    roll = input("Enter roll number: ")
+    branch = input("Enter branch: ")
 
     if roll in students:
         print("Student with this roll number already exists.")
         return
 
-    students[roll] = {
-        "name": name,
-        "roll": roll,
-        "branch": branch
-    }
-
+    students[roll] = {"name": name, "branch": branch}
+    save_students_to_file()
     print("Student added successfully!")
 
 
-# View all students
+# Function to view students
 def view_students():
     if not students:
         print("No students found.")
         return
 
     print("\n--- Student List ---")
-    for i, student in enumerate(students.values(), start=1):
-        print(
-            f"{i}. Name: {student['name']}, "
-            f"Roll: {student['roll']}, "
-            f"Branch: {student['branch']}"
-        )
+    for i, (roll, student) in enumerate(students.items(), start=1):
+        print(f"{i}. Name: {student['name']}, Roll: {roll}, Branch: {student['branch']}")
 
 
-# Update student details
+# Function to update student
 def update_student():
-    roll = get_non_empty_input("Enter roll number of student to update: ")
+    roll = input("Enter roll number of student to update: ")
 
     if roll not in students:
         print("Student not found.")
         return
 
     print("Student found.")
-    students[roll]["name"] = get_non_empty_input("Enter new name: ")
-    students[roll]["branch"] = get_non_empty_input("Enter new branch: ")
+    name = input("Enter new name: ")
+    branch = input("Enter new branch: ")
 
+    students[roll] = {"name": name, "branch": branch}
+    save_students_to_file()
     print("Student updated successfully!")
 
 
-# Delete a student
+# Function to delete student
 def delete_student():
-    roll = get_non_empty_input("Enter roll number of student to delete: ")
+    roll = input("Enter roll number of student to delete: ")
 
-    if roll in students:
-        del students[roll]
-        print("Student deleted successfully!")
-    else:
+    if roll not in students:
         print("Student not found.")
+        return
+
+    del students[roll]
+    save_students_to_file()
+    print("Student deleted successfully!")
 
 
-# ---------- Menu Function ----------
+# Main menu
 def menu():
     while True:
         print("\n--- Student Management System ---")
@@ -89,7 +101,7 @@ def menu():
         print("4. Delete Student")
         print("5. Exit")
 
-        choice = input("Enter your choice: ").strip()
+        choice = input("Enter your choice: ")
 
         if choice == "1":
             add_student()
@@ -106,5 +118,4 @@ def menu():
             print("Invalid choice. Please try again.")
 
 
-# ---------- Program Start ----------
 menu()
